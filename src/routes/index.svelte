@@ -1,44 +1,41 @@
 <style>
-	h1, figure, p {
-		text-align: center;
-		margin: 0 auto;
-	}
-
-	h1 {
-		font-size: 2.8em;
-		text-transform: uppercase;
-		font-weight: 700;
-		margin: 0 0 0.5em 0;
-	}
-
-	figure {
-		margin: 0 0 1em 0;
-	}
-
-	img {
-		width: 100%;
-		max-width: 400px;
-		margin: 0 0 1em 0;
-	}
-
-	p {
-		margin: 1em auto;
-	}
-
-	@media (min-width: 480px) {
-		h1 {
-			font-size: 4em;
-		}
-	}
 </style>
 
+<svelte:head>
+	<title>apakaka</title>
+</svelte:head>
+
 <script context="module">
-	fetch(`home.json`).then(r => r.json()).then(posts => {
-		return { posts };
-	});
+	export async function preload(page, session) {
+		if(page.query.date) {
+			return this.fetch(`${page.query.date}.json`).then(r => r.json()).then(workouts => {
+				return { workouts };
+			});
+		}
+
+		const workoutDate = new Date();
+		const day = ('0' + workoutDate.getDate()).slice(-2);
+		const month = ('0' + (workoutDate.getMonth() + 1)).slice(-2);
+		const year = workoutDate.getFullYear();
+
+		return this.fetch(`${year + month + day}.json`).then(r => r.json()).then(workouts => {
+			return { workouts };
+		});
+	}
 </script>
 
-<svelte:head>
-	<title>Sapper project template</title>
-</svelte:head>
+<script>
+	export let workouts;
+</script>
+
+<ul>
+	{#each workouts as workout}
+		<div>
+			<div>{workout.scheduledDateInteger}</div>
+			<div>{workout.description}</div>
+			<div>{workout.athletesNotes}</div>
+		</div>
+	{/each}
+</ul>
+
 
