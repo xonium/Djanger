@@ -18,8 +18,15 @@ export function get(req, res) {
 		res.writeHead(200, {
 			'Content-Type': 'application/json'
 		});
-	
-		res.end(JSON.stringify(lookup.get(slug)));
+
+		let unsortedWorkouts = lookup.get(slug);
+		unsortedWorkouts.sort((a, b) => {
+			if(a.whiteboardDisplayOrder < b.whiteboardDisplayOrder) return -1;
+			if(a.whiteboardDisplayOrder > b.whiteboardDisplayOrder) return 1;
+			return 0;
+		})
+
+		res.end(JSON.stringify(unsortedWorkouts));
 	} else {
 		res.writeHead(404, {
 			'Content-Type': 'application/json'

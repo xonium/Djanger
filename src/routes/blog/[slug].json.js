@@ -15,7 +15,15 @@ export function get(req, res, next) {
 			'Content-Type': 'application/json'
 		});
 
-		res.end(lookup.get(slug));
+		let unsortedWorkouts = lookup.get(slug);
+		unsortedWorkouts.sort((a, b) => {
+			console.log(a, b);
+			if(a.whiteboardDisplayOrder < b.whiteboardDisplayOrder) return -1;
+			if(a.whiteboardDisplayOrder > b.whiteboardDisplayOrder) return 1;
+			return 0;
+		})
+
+		res.end(unsortedWorkouts);
 	} else {
 		res.writeHead(404, {
 			'Content-Type': 'application/json'
